@@ -31,3 +31,14 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Maven
+dependency-reduced-pom.xml
+
+# Environment files
+application.properties
+application.yml
+.env
+
+# Logs
+*.log
