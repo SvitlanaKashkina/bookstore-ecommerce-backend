@@ -21,15 +21,15 @@ public class BookController {
     private static final Logger log = LoggerFactory.getLogger(BookController.class);
 
     //Create a new book
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<BookDTO> createBook (@Valid @RequestBody BookDTO bookDTO) {
-        log.info("HTTP POST /books - Create book: title='{}', author='{}'", bookDTO.getTitle(), bookDTO.getAuthor());
+        log.info("HTTP POST /books - Create book");
         BookDTO created = bookService.createBook(bookDTO);
         return ResponseEntity.ok(created);
     }
 
     //Get all books
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<BookDTO>> getAllBooks() {
         log.info("HTTP GET /books - Get all books");
         return ResponseEntity.ok(bookService.getAllBooks());
