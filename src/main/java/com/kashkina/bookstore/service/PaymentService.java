@@ -3,6 +3,7 @@ package com.kashkina.bookstore.service;
 import com.kashkina.bookstore.dto.PaymentDTO;
 import com.kashkina.bookstore.entity.Order;
 import com.kashkina.bookstore.entity.Payment;
+import com.kashkina.bookstore.enums.PaymentStatus;
 import com.kashkina.bookstore.exception.ResourceNotFoundException;
 import com.kashkina.bookstore.repository.OrderRepository;
 import com.kashkina.bookstore.repository.PaymentRepository;
@@ -17,10 +18,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PaymentService {
 
-    private PaymentRepository paymentRepository;
-    private OrderRepository orderRepository;
+    private final PaymentRepository paymentRepository;
+    private final OrderRepository orderRepository;
 
-    private static final Logger log = LoggerFactory.getLogger(BookService.class);
+    private static final Logger log = LoggerFactory.getLogger(PaymentService.class);
 
     // Create a payment
     public PaymentDTO createPayment(PaymentDTO paymentDTO) {
@@ -36,7 +37,9 @@ public class PaymentService {
                 .order(order)
                 .amount(paymentDTO.getAmount())
                 .method(paymentDTO.getMethod())
-                .status(paymentDTO.getStatus() != null ? paymentDTO.getStatus() : paymentDTO.getStatus().PENDING)
+                .status(paymentDTO.getStatus() != null
+                        ? paymentDTO.getStatus()
+                        : PaymentStatus.PENDING)
                 .build();
 
         Payment saved = paymentRepository.save(payment);

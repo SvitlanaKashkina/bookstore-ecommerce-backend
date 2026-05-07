@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -25,7 +27,7 @@ public class PaymentDTO {
     @NotNull(message = "Amount must not be null")
     @DecimalMin(value = "0.0", inclusive = false, message = "Amount must be greater than 0")
     @Digits(integer = 10, fraction = 2, message = "Amount must be a valid number with up to 2 decimal places")
-    private Double amount;
+    private BigDecimal amount;
 
     @NotNull(message = "Status must not be null")
     private PaymentStatus status;

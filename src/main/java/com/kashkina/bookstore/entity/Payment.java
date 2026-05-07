@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -39,7 +40,7 @@ public class Payment {
     @Column(name = "amount", nullable = false)
     @NotNull(message = "Amount must not be null")
     @Digits(integer = 10, fraction = 2, message = "Amount must be a valid number with 2 decimal places")
-    private Double amount;
+    private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)

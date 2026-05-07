@@ -21,7 +21,7 @@ public class PaymentDetailsController {
 
     // Creating a new payment detail
     @PostMapping
-    @PreAuthorize("hasRole('USER')")
+    //@PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.CREATED)
     public PaymentDetailsDTO createPaymentDetails(@Valid @RequestBody PaymentDetailsDTO dto) {
         log.info("Request to create payment details for paymentId={}", dto.getPaymentId());

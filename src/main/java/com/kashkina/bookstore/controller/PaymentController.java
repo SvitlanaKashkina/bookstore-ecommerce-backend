@@ -18,7 +18,7 @@ import java.util.List;
 public class PaymentController {
 
     private PaymentService paymentService;
-    private static final Logger log = LoggerFactory.getLogger(BookController.class);
+    private static final Logger log = LoggerFactory.getLogger(PaymentController.class);
 
     // Create a new payment
     @PostMapping

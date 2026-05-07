@@ -48,7 +48,6 @@ public class PaymentDetails {
 
     @PrePersist
     public void prePersist() {
-        // Например, можно обрезать пробелы у строк
         if (provider != null) provider = provider.trim();
         if (transactionId != null) transactionId = transactionId.trim();
         if (payerEmail != null) payerEmail = payerEmail.trim();

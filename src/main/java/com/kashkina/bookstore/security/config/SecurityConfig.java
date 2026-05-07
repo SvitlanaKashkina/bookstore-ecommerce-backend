@@ -9,9 +9,8 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -23,25 +22,85 @@ public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        http
+                .csrf(csrf -> csrf.disable())
+
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
+
+                        // =========================
+                        // PUBLIC ENDPOINTS
+                        // =========================
+
+                        .requestMatchers(
+                                "/api/auth/**"
+                        ).permitAll()
+
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/books/all",
+                                "/api/books/*",
+                                "/api/books/search/title",
+                                "/api/books/search/category"
+                        ).permitAll()
+
+                        // =========================
+                        // ADMIN ENDPOINTS
+                        // =========================
+
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/books/create"
+                        ).hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.DELETE,
+                                "/api/books/{id}"
+                        ).hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/users"
+                        ).hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/payments"
+                        ).hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/payment-details"
+                        ).hasRole("ADMIN")
+
+                        // =========================
+                        // USER ENDPOINTS
+                        // =========================
+
+                        .requestMatchers("/api/users/**")
+                        .authenticated()
+
+                        .requestMatchers("/api/carts/**")
+                        .authenticated()
+
+                        .requestMatchers("/api/orders/**")
+                        .authenticated()
+
+                        .requestMatchers("/api/order-items/**")
+                        .authenticated()
+
+                        .requestMatchers("/api/payments/**")
+                        .authenticated()
+
+                        .requestMatchers("/api/payment-details/**")
+                        .authenticated()
+
+                        // =========================
+
                         .anyRequest().authenticated()
                 )
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                );
+
+                .httpBasic(Customizer.withDefaults());
 
         return http.build();
     }

@@ -21,7 +21,7 @@ public class UserController {
 
     // Get user by ID
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("#id == authentication.principal.id or hasRole('ADMIN')")
     public UserDTO getUserById(@PathVariable Long id) {
         log.info("HTTP GET /users/{} - Get user by ID", id);
         return userService.getUserById(id);
@@ -29,7 +29,7 @@ public class UserController {
 
     // Get user by email
     @GetMapping("/by-email")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("#email == authentication.name or hasRole('ADMIN')")
     public UserDTO getUserByEmail(@RequestParam String email) {
         log.info("HTTP GET /users/by-email?email={} - Get user by email", email);
         return userService.getUserByEmail(email);
@@ -45,7 +45,7 @@ public class UserController {
 
     // Update user
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("#id == authentication.principal.id or hasRole('ADMIN')")
     public UserDTO updateUser(@PathVariable Long id, @RequestBody UserDTO dto) {
         log.info("HTTP PUT /users/{} - Update user", id);
         return userService.updateUser(id, dto);

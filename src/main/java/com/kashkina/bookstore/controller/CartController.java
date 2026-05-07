@@ -2,6 +2,7 @@ package com.kashkina.bookstore.controller;
 
 import com.kashkina.bookstore.dto.CartDTO;
 import com.kashkina.bookstore.service.CartService;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -10,15 +11,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/carts")
+@RequiredArgsConstructor
 public class CartController {
 
     private static final Logger log = LoggerFactory.getLogger(CartController.class);
 
     private final CartService cartService;
-
-    public CartController(CartService cartService) {
-        this.cartService = cartService;
-    }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
