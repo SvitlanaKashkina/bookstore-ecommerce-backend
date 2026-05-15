@@ -7,11 +7,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/orders")
 @RequiredArgsConstructor
+@EnableMethodSecurity
 public class OrderController {
 
     private static final Logger log = LoggerFactory.getLogger(OrderController.class);
@@ -27,14 +29,20 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize(
+            "@orderSecurityService.isOwner(#id, authentication.principal.id) " +
+                    "or hasRole('ADMIN')"
+    )
     public ResponseEntity<OrderDTO> getOrderById(@PathVariable Long id) {
         log.info("HTTP GET /orders/{}", id);
         return ResponseEntity.ok(orderService.getOrderById(id));
     }
 
     @PutMapping("/{id}/cancel")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize(
+            "@orderSecurityService.isOwner(#id, authentication.principal.id) " +
+                    "or hasRole('ADMIN')"
+    )
     public ResponseEntity<Void> cancelOrder(@PathVariable Long id) {
         orderService.cancelOrder(id);
         return ResponseEntity.noContent().build();

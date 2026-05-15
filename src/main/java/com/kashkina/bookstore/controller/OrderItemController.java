@@ -7,11 +7,14 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/order-items")
 @RequiredArgsConstructor
+@EnableMethodSecurity
 public class OrderItemController {
 
     private static final Logger log = LoggerFactory.getLogger(OrderItemController.class);
@@ -19,6 +22,7 @@ public class OrderItemController {
     private final OrderItemService orderItemService;
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<OrderItemDTO> getItem(@PathVariable Long id) {
         log.info("HTTP GET /order-items/{}", id);
         return ResponseEntity.ok(orderItemService.getById(id));
@@ -31,6 +35,7 @@ public class OrderItemController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Void> deleteItem(@PathVariable Long id) {
         log.info("HTTP DELETE /order-items/{}", id);
         orderItemService.delete(id);

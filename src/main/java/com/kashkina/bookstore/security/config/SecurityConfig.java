@@ -19,28 +19,27 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final CustomUserDetailsService customUserDetailsService;
-
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration config
+    ) throws Exception {
+
         return config.getAuthenticationManager();
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http
+    ) throws Exception {
 
         http
                 .csrf(csrf -> csrf.disable())
 
                 .authorizeHttpRequests(auth -> auth
 
-                        // =========================
-                        // PUBLIC ENDPOINTS
-                        // =========================
-
-                        .requestMatchers(
-                                "/api/auth/**"
-                        ).permitAll()
+                        // PUBLIC
+                        .requestMatchers("/api/auth/**")
+                        .permitAll()
 
                         .requestMatchers(HttpMethod.GET,
                                 "/api/books/all",
@@ -49,10 +48,7 @@ public class SecurityConfig {
                                 "/api/books/search/category"
                         ).permitAll()
 
-                        // =========================
-                        // ADMIN ENDPOINTS
-                        // =========================
-
+                        // ADMIN
                         .requestMatchers(HttpMethod.POST,
                                 "/api/books/create"
                         ).hasRole("ADMIN")
@@ -61,22 +57,10 @@ public class SecurityConfig {
                                 "/api/books/{id}"
                         ).hasRole("ADMIN")
 
-                        .requestMatchers(HttpMethod.GET,
-                                "/api/users"
-                        ).hasRole("ADMIN")
+                        .requestMatchers("/api/admin/**")
+                        .hasRole("ADMIN")
 
-                        .requestMatchers(HttpMethod.GET,
-                                "/api/payments"
-                        ).hasRole("ADMIN")
-
-                        .requestMatchers(HttpMethod.GET,
-                                "/api/payment-details"
-                        ).hasRole("ADMIN")
-
-                        // =========================
-                        // USER ENDPOINTS
-                        // =========================
-
+                        // AUTHENTICATED USER
                         .requestMatchers("/api/users/**")
                         .authenticated()
 
@@ -86,18 +70,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/orders/**")
                         .authenticated()
 
-                        .requestMatchers("/api/order-items/**")
+                        .anyRequest()
                         .authenticated()
-
-                        .requestMatchers("/api/payments/**")
-                        .authenticated()
-
-                        .requestMatchers("/api/payment-details/**")
-                        .authenticated()
-
-                        // =========================
-
-                        .anyRequest().authenticated()
                 )
 
                 .httpBasic(Customizer.withDefaults());

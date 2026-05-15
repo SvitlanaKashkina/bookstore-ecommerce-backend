@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/payments")
 @RequiredArgsConstructor
+@EnableMethodSecurity
 public class PaymentController {
 
     private PaymentService paymentService;
@@ -22,7 +24,9 @@ public class PaymentController {
 
     // Create a new payment
     @PostMapping
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize(
+            "@orderSecurityService.isOwner(#paymentDTO.orderId, authentication.principal.id)"
+    )
     @ResponseStatus(HttpStatus.CREATED)
     public PaymentDTO createPayment(@Valid @RequestBody PaymentDTO paymentDTO) {
         log.info("Request to create payment for orderId={}", paymentDTO.getOrderId());
@@ -43,7 +47,10 @@ public class PaymentController {
 
     // Receive payment by id
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize(
+            "@paymentSecurityService.isOwner(#id, authentication.principal.id) " +
+                    "or hasRole('ADMIN')"
+    )
     public PaymentDTO getPaymentById(@PathVariable Long id) {
         log.info("Request to get payment with id={}", id);
         PaymentDTO payment = paymentService.getPaymentById(id);
@@ -53,6 +60,7 @@ public class PaymentController {
 
     // Update payment's status
     @PutMapping("/{id}/status")
+    @PreAuthorize("hasRole('ADMIN')")
     public PaymentDTO updatePaymentStatus(@PathVariable Long id, @RequestBody PaymentDTO dto) {
         log.info("Request to update payment status for id={} to {}", id, dto.getStatus());
         PaymentDTO updated = paymentService.updatePaymentStatus(id, dto);

@@ -8,12 +8,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/payment-details")
 @RequiredArgsConstructor
+@EnableMethodSecurity
 public class PaymentDetailsController {
 
     private PaymentDetailsService paymentDetailsService;
@@ -21,7 +23,7 @@ public class PaymentDetailsController {
 
     // Creating a new payment detail
     @PostMapping
-    //@PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.CREATED)
     public PaymentDetailsDTO createPaymentDetails(@Valid @RequestBody PaymentDetailsDTO dto) {
         log.info("Request to create payment details for paymentId={}", dto.getPaymentId());
@@ -42,7 +44,10 @@ public class PaymentDetailsController {
 
     // Receiving payment details by ID
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize(
+            "@paymentSecurityService.isOwner(#id, authentication.principal.id) " +
+                    "or hasRole('ADMIN')"
+    )
     public PaymentDetailsDTO getPaymentDetailsById(@PathVariable Long id) {
         log.info("Request to get payment details with id={}", id);
         PaymentDetailsDTO dto = paymentDetailsService.getPaymentDetailsById(id);

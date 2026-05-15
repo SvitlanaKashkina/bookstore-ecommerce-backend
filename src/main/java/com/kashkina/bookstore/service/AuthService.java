@@ -7,6 +7,8 @@ import com.kashkina.bookstore.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,15 +18,20 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
-    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
+    private static final Logger log =
+            LoggerFactory.getLogger(AuthService.class);
 
     // REGISTER
     public User register(UserDTO dto) {
+
         log.info("Registering user with email={}", dto.getEmail());
 
         if (userRepository.existsByEmail(dto.getEmail())) {
+
             log.error("User already exists with email={}", dto.getEmail());
+
             throw new RuntimeException("User already exists");
         }
 
@@ -39,22 +46,28 @@ public class AuthService {
         User saved = userRepository.save(user);
 
         log.info("User registered with id={}", saved.getId());
+
         return saved;
     }
 
-    // LOGIN (without JWT yet)
+    // LOGIN with AuthenticationManager
     public User login(String email, String password) {
+
         log.info("Login attempt for email={}", email);
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        email,
+                        password
+                )
+        );
 
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            log.error("Invalid password for email={}", email);
-            throw new RuntimeException("Invalid credentials");
-        }
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new RuntimeException("User not found"));
 
         log.info("User successfully logged in: {}", email);
+
         return user;
     }
 }
