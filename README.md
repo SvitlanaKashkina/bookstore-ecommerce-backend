@@ -1,4 +1,4 @@
-📚 Bookstore E-Commerce Backend
+# 📚 Bookstore E-Commerce Backend
 
 A backend application for an online bookstore built with Java and Spring Boot.
 This project is being developed as a learning and portfolio project to gain hands-on experience with modern e-commerce backend development. The goal is to simulate a real-world online store architecture while implementing industry-standard technologies and best practices.
