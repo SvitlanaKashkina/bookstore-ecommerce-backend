@@ -31,25 +31,21 @@ public class OrderItem {
     @Column(name = "order_item_id")
     private Long id;
 
-    @NotNull(message = "Book ID must not be null")
+    @NotNull
     @Column(name = "book_id", nullable = false)
     private Long bookId;
 
-    @NotNull(message = "Quantity must not be null")
-    @Min(value = 1, message = "Quantity must be at least 1")
+    @NotNull
+    @Min(1)
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
-    @NotNull(message = "Price must not be null")
-    @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than 0")
+    @NotNull
+    @DecimalMin(value = "0.0", inclusive = false)
     @Column(name = "price", nullable = false)
     private BigDecimal price;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cart_id", referencedColumnName = "cart_id")
-    private Cart cart;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", referencedColumnName = "order_id")
+    @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 }

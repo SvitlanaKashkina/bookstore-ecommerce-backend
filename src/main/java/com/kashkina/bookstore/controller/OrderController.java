@@ -44,6 +44,7 @@ public class OrderController {
                     "or hasRole('ADMIN')"
     )
     public ResponseEntity<Void> cancelOrder(@PathVariable Long id) {
+        log.info("Request to cancel order with id={}", id);
         orderService.cancelOrder(id);
         return ResponseEntity.noContent().build();
     }
