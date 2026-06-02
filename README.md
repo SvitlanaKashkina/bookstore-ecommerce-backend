@@ -1,44 +1,97 @@
 📚 Bookstore E-Commerce Backend
 
-This project is a backend application for an e-commerce bookstore, built with Java and Spring Boot. It is designed to practice real-world backend development, including authentication, database management, and payment processing.
+A backend application for an online bookstore built with Java and Spring Boot.
+This project is being developed as a learning and portfolio project to gain hands-on experience with modern e-commerce backend development. The goal is to simulate a real-world online store architecture while implementing industry-standard technologies and best practices.
+The project focuses on authentication, authorization, product management, order processing, payment integration, and scalable backend architecture.
 
-🚀 Features
+---
+## Technology Stack
 
-REST API for managing books, users, and orders
-User registration and authentication
-Secure authentication with JWT
-Role-based authorization (USER / ADMIN)
-Shopping cart functionality
-Order management system
-Payment processing integration (planned)
-Database integration with PostgreSQL
+Backend
+- Java 21
+- Spring Boot
+- Spring Security
+- JWT Authentication
+- Spring Data JPA
+- Hibernate
+- PostgreSQL
+- Lombok
+- Maven
 
-🛠️ Tech Stack
+API & Documentation
+- REST API
+- Swagger / OpenAPI
+- Postman
 
-Java 21
-Spring Boot
-Spring Security
-JWT (JSON Web Token)
-Spring Data JPA / Hibernate
-PostgreSQL
-Maven
+Security
+- Password hashing
+- JWT tokens
+- Role-based access control
+- Email verification
 
-📦 Project Structure
+Database
+- PostgreSQL
+- Hibernate ORM
+- JPA
 
-controller – REST API endpoints
-service – business logic
-repository – database access
-model – entities
-security – authentication and authorization
+Testing
+- JUnit
 
-💳 Payment
+Monitoring & Reliability
+- Logging
+- Global Exception Handling
 
-Payment integration (e.g., Stripe and PayPal) is planned as part of the project.
+Payments
+- Stripe API
+- PayPal API
 
-📌 Status
+---
+## Features
+
+Authentication & Security
+- User registration
+- User login
+- JWT-based authentication
+- Role-based authorization (USER / ADMIN)
+- Password hashing with Spring Security
+- Email verification
+- Protected REST API endpoints
+
+Book Management
+- Create, update, delete books (Admin)
+- Browse available books
+- Search and filter books
+- Book inventory management
+
+Shopping Cart
+- Add books to cart
+- Remove books from cart
+- Update item quantities
+- View cart contents
+
+Order Management
+- Create orders
+- Order history
+- Order status management
+- User-specific order tracking
+
+Payment Processing
+
+Planned integrations:
+- Stripe API
+- PayPal API
+- Secure payment workflow
+- Payment status tracking
+
+---
+## Status
 
 🚧 Work in progress – the project is actively being developed and new features are being added.
 
-🎯 Goal
+---
+## Contact
 
-The goal of this project is to gain practical experience in building secure and scalable e-commerce backend systems.
+For collaboration, career opportunities, or project-related questions:
+
+- 📧 Email: [k.svitlana@web.de](mailto:k.svitlana@web.de)
+- 🔗 LinkedIn: [Svitlana Kashkina](https://www.linkedin.com/in/svitlana-kashkina-12a0922b4/)
