@@ -6,6 +6,7 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(
@@ -46,8 +47,11 @@ public class User {
     @Column(name = "role", nullable = false, length = 20)
     private Role role;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "user")
+    private List<Order> orders;
 
     @PrePersist
     public void prePersist() {

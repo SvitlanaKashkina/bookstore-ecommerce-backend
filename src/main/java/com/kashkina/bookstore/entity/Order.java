@@ -34,16 +34,15 @@ public class Order {
     @Column(name = "order_id")
     private Long id;
 
-    @NotNull(message = "User ID must not be null")
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @NotNull(message = "Total price must not be null")
-    @DecimalMin(value = "0.0", message = "Total price must be >= 0")
+    @NotNull
+    @DecimalMin(value = "0.0")
     @Column(name = "total_price", nullable = false)
     private BigDecimal totalPrice;
 
-    @NotNull(message = "Status must not be null")
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 50)
     private OrderStatus status;
@@ -57,7 +56,7 @@ public class Order {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private List<OrderItem> items = new ArrayList<>();
+    private List<OrderItem> items;
 
     @PrePersist
     public void prePersist() {

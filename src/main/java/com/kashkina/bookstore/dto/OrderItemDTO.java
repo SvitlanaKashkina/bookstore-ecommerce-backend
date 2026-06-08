@@ -20,8 +20,12 @@ public class OrderItemDTO {
 
     private Long id;
 
+    private Long orderId;
+
     @NotNull(message = "Book ID must not be null")
     private Long bookId;
+
+    private String bookTitle;
 
     @NotNull(message = "Quantity must not be null")
     @Min(value = 1, message = "Quantity must be at least 1")
@@ -30,7 +34,4 @@ public class OrderItemDTO {
     @NotNull(message = "Price must not be null")
     @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than 0")
     private BigDecimal price;
-
-    @NotNull(message = "Order ID must not be null")
-    private Long orderId;
 }

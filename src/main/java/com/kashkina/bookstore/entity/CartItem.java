@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(
         name = "cart_items",
@@ -35,6 +37,12 @@ public class CartItem {
     private Book book;
 
     @Column(name = "quantity", nullable = false)
-    @Min(1)
     private Integer quantity;
+
+    // snapshot
+    @Column(name = "price_at_addition", nullable = false)
+    private BigDecimal priceAtAddition;
+
+    @Column(name = "book_title_snapshot", nullable = false)
+    private String bookTitleSnapshot;
 }

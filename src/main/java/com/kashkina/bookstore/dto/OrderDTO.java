@@ -1,5 +1,6 @@
 package com.kashkina.bookstore.dto;
 
+import com.kashkina.bookstore.enums.OrderStatus;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -29,7 +30,7 @@ public class OrderDTO {
 
     @NotBlank(message = "Status must not be blank")
     @Size(max = 50, message = "Status max length is 50")
-    private String status;
+    private OrderStatus status;
 
     private LocalDateTime createdAt;
 }

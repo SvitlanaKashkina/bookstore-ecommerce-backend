@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,108 +29,120 @@ public class CartItemService {
     private final CartRepository cartRepository;
     private final BookRepository bookRepository;
 
-    // ADD item to cart
+    // =========================
+    // ADD TO CART (MAIN METHOD)
+    // =========================
     public CartItemDTO addToCart(CartItemDTO dto) {
 
-        log.info("Adding book {} to cart {}",
-                dto.getBookId(),
-                dto.getCartId());
+        log.info("Adding bookId={} to cartId={}, quantity={}",
+                dto.getBookId(), dto.getCartId(), dto.getQuantity());
 
         Cart cart = cartRepository.findById(dto.getCartId())
-                .orElseThrow(() -> {
-                    log.warn("Cart not found: id={}", dto.getCartId());
-                    return new CartNotFoundException(
-                            "Cart not found with id " + dto.getCartId());
-                });
+                .orElseThrow(() -> new CartNotFoundException(
+                        "Cart not found with id " + dto.getCartId()));
 
         Book book = bookRepository.findById(dto.getBookId())
-                .orElseThrow(() -> {
-                    log.warn("Book not found: id={}", dto.getBookId());
-                    return new BookNotFoundException(
-                            "Book not found with id " + dto.getBookId());
-                });
+                .orElseThrow(() -> new BookNotFoundException(
+                        "Book not found with id " + dto.getBookId()));
 
-        CartItem item = CartItem.builder()
-                .cart(cart)
-                .book(book)
-                .quantity(dto.getQuantity())
-                .build();
+        CartItem item = cartItemRepository
+                .findByCartIdAndBookId(cart.getId(), book.getId())
+                .orElse(null);
+
+        if (item != null) {
+
+            // UPDATE EXISTING ITEM
+            item.setQuantity(item.getQuantity() + dto.getQuantity());
+
+            // refresh snapshot (important for price/title changes)
+            item.setPriceAtAddition(book.getPrice());
+            item.setBookTitleSnapshot(book.getTitle());
+
+            log.info("Updated existing CartItem id={}", item.getId());
+
+        } else {
+
+            // CREATE NEW ITEM
+            item = CartItem.builder()
+                    .cart(cart)
+                    .book(book)
+                    .quantity(dto.getQuantity())
+                    .priceAtAddition(book.getPrice())
+                    .bookTitleSnapshot(book.getTitle())
+                    .build();
+
+            log.info("Created new CartItem for bookId={} in cartId={}",
+                    book.getId(), cart.getId());
+        }
 
         CartItem saved = cartItemRepository.save(item);
 
-        log.info("CartItem created successfully. id={}", saved.getId());
+        log.info("CartItem saved successfully id={}", saved.getId());
 
         return mapToDTO(saved);
     }
 
-    // GET items by cart
+    // =========================
+    // GET ITEMS BY CART
+    // =========================
     public List<CartItemDTO> getItemsByCart(Long cartId) {
 
-        log.info("Fetching cart items for cart id={}", cartId);
+        log.info("Fetching cart items for cartId={}", cartId);
 
-        List<CartItemDTO> items = cartItemRepository.findByCartId(cartId)
+        return cartItemRepository.findByCartId(cartId)
                 .stream()
                 .map(this::mapToDTO)
                 .toList();
-
-        log.info("Found {} items in cart {}", items.size(), cartId);
-
-        return items;
     }
 
-    // DELETE item
+    // =========================
+    // DELETE ITEM
+    // =========================
     public void delete(Long id) {
 
-        log.info("Deleting cart item id={}", id);
+        log.info("Deleting cartItem id={}", id);
 
         if (!cartItemRepository.existsById(id)) {
-            log.warn("Cart item not found: id={}", id);
-
             throw new CartItemNotFoundException(
                     "CartItem not found with id " + id);
         }
 
         cartItemRepository.deleteById(id);
 
-        log.info("Cart item deleted successfully. id={}", id);
+        log.info("CartItem deleted id={}", id);
     }
 
-    // UPDATE quantity
+    // =========================
+    // UPDATE QUANTITY
+    // =========================
     public CartItemDTO updateQuantity(Long id, Integer quantity) {
 
-        log.info(
-                "Updating quantity for cart item id={} to quantity={}",
-                id,
-                quantity
-        );
+        log.info("Updating quantity cartItemId={} -> {}", id, quantity);
 
         CartItem item = cartItemRepository.findById(id)
-                .orElseThrow(() -> {
-                    log.warn("Cart item not found: id={}", id);
-                    return new CartItemNotFoundException(
-                            "CartItem not found with id " + id);
-                });
+                .orElseThrow(() ->
+                        new CartItemNotFoundException(
+                                "CartItem not found with id " + id));
 
         item.setQuantity(quantity);
 
-        CartItem updated = cartItemRepository.save(item);
+        CartItem saved = cartItemRepository.save(item);
 
-        log.info(
-                "Cart item updated successfully. id={}, quantity={}",
-                id,
-                quantity
-        );
-
-        return mapToDTO(updated);
+        return mapToDTO(saved);
     }
 
+    // =========================
     // MAPPER
+    // =========================
     private CartItemDTO mapToDTO(CartItem item) {
+
         return CartItemDTO.builder()
                 .id(item.getId())
                 .cartId(item.getCart().getId())
                 .bookId(item.getBook().getId())
                 .quantity(item.getQuantity())
+                .priceAtAddition(item.getPriceAtAddition())
+                .bookTitleSnapshot(item.getBookTitleSnapshot())
                 .build();
     }
 }

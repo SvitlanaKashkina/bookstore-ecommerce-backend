@@ -29,9 +29,14 @@ public class OrderItemController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderItemDTO> createItem(@Valid @RequestBody OrderItemDTO dto) {
-        log.info("HTTP POST /order-items - create item for bookId={}, quantity={}", dto.getBookId(), dto.getQuantity());
-        return ResponseEntity.ok(orderItemService.create(dto));
+    public ResponseEntity<OrderItemDTO> createItem(
+            @PathVariable Long orderId,
+            @Valid @RequestBody OrderItemDTO dto) {
+
+        log.info("HTTP POST /order-items - orderId={}, bookId={}, quantity={}",
+                orderId, dto.getBookId(), dto.getQuantity());
+
+        return ResponseEntity.ok(orderItemService.create(orderId, dto));
     }
 
     @DeleteMapping("/{id}")

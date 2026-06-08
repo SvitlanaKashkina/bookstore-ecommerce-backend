@@ -32,15 +32,14 @@ public class Cart {
     @Column(name = "cart_id")
     private Long id;
 
-    @NotNull(message = "User ID must not be null")
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @Builder.Default
     @OneToMany(
             mappedBy = "cart",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private List<OrderItem> items = new ArrayList<>();
+    private List<CartItem> items = new ArrayList<>();
 }

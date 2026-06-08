@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,4 +27,7 @@ public class CartItemDTO {
     @NotNull(message = "Quantity must not be null")
     @Min(value = 1, message = "Quantity must be at least 1")
     private Integer quantity;
+
+    private BigDecimal priceAtAddition;
+    private String bookTitleSnapshot;
 }

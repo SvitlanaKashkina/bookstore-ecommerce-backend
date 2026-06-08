@@ -31,21 +31,20 @@ public class OrderItem {
     @Column(name = "order_item_id")
     private Long id;
 
-    @NotNull
-    @Column(name = "book_id", nullable = false)
-    private Long bookId;
-
-    @NotNull
-    @Min(1)
-    @Column(name = "quantity", nullable = false)
-    private Integer quantity;
-
-    @NotNull
-    @DecimalMin(value = "0.0", inclusive = false)
-    @Column(name = "price", nullable = false)
-    private BigDecimal price;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "book_id", nullable = false)
+    private Book book;
+
+    @Column(name = "quantity", nullable = false)
+    private Integer quantity;
+
+    @Column(name = "price", nullable = false)
+    private BigDecimal price;   // snapshot price
+
+    @Column(name = "book_title", nullable = false)
+    private String bookTitle;   // snapshot title
 }

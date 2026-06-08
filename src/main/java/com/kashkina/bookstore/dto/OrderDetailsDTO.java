@@ -1,25 +1,31 @@
 package com.kashkina.bookstore.dto;
 
-import jakarta.validation.constraints.NotNull;
+import com.kashkina.bookstore.enums.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CartDTO {
+public class OrderDetailsDTO {
 
     private Long id;
 
-    @NotNull(message = "User ID must not be null")
     private Long userId;
 
-    private List<CartItemDTO> items;
-
     private BigDecimal totalPrice;
+
+    private OrderStatus status;
+
+    private LocalDateTime createdAt;
+
+    private List<OrderItemDTO> items;
+
 }

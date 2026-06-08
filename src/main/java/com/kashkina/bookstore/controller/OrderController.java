@@ -1,6 +1,7 @@
 package com.kashkina.bookstore.controller;
 
 import com.kashkina.bookstore.dto.OrderDTO;
+import com.kashkina.bookstore.dto.OrderDetailsDTO;
 import com.kashkina.bookstore.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -9,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -20,24 +23,34 @@ public class OrderController {
 
     private final OrderService orderService;
 
+    // CREATE ORDER
     @PostMapping
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<OrderDTO> createOrder(@RequestBody OrderDTO dto) {
         log.info("HTTP POST /orders");
-        OrderDTO created = orderService.createOrder(dto);
-        return ResponseEntity.ok(created);
+        return ResponseEntity.ok(orderService.createOrder(dto));
     }
 
+    // GET ALL ORDERS (summary list)
+    @GetMapping
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<List<OrderDTO>> getAllOrders() {
+        log.info("HTTP GET /orders");
+        return ResponseEntity.ok(orderService.getAllOrders());
+    }
+
+    // GET ORDER DETAILS (FULL DTO)
     @GetMapping("/{id}")
     @PreAuthorize(
             "@orderSecurityService.isOwner(#id, authentication.principal.id) " +
                     "or hasRole('ADMIN')"
     )
-    public ResponseEntity<OrderDTO> getOrderById(@PathVariable Long id) {
+    public ResponseEntity<OrderDetailsDTO> getOrderById(@PathVariable Long id) {
         log.info("HTTP GET /orders/{}", id);
-        return ResponseEntity.ok(orderService.getOrderById(id));
+        return ResponseEntity.ok(orderService.getOrderDetails(id));
     }
 
+    // CANCEL ORDER
     @PutMapping("/{id}/cancel")
     @PreAuthorize(
             "@orderSecurityService.isOwner(#id, authentication.principal.id) " +
